@@ -41,6 +41,7 @@
 #
 #
 #changelog:
+#v0.3.0 - futurize run for python3 (2018-6-16)
 #v0.2.1 - added help messages and hint for empty addresses option (2011-10-15)
 #v0.2.0 - added several options, including: proper weechat options
 #         for multiple addresses, ignore strings, urgencies, images,
@@ -58,9 +59,10 @@
 #         toggle to show server and channel names in notifications
 #         toggle to show notifications for dcc?
 #         
+from builtins import str
 import weechat, string, subprocess, re
 
-weechat.register("sshnotify", "delwin", "0.2.1", "GPL3", "the overkill desktop notification solution", "", "")
+weechat.register("sshnotify", "delwin", "0.3.0", "GPL3", "the overkill desktop notification solution", "", "")
 
 #options which can be defined with /set plugins.var.python.sshnotify.foo
 settings = {
@@ -89,7 +91,7 @@ settings = {
 }
 
 # Init everything
-for option, default_value in settings.items():
+for option, default_value in list(settings.items()):
     if weechat.config_get_plugin(option) == "":
         weechat.config_set_plugin(option, default_value)
 
