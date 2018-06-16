@@ -60,7 +60,7 @@ from builtins import str
 import re
 import weechat
 
-weechat.register("sshnotify", "delwin", "0.3.0", "GPL3",
+weechat.register("sshnotify", "delwin", "0.3.1", "GPL3",
                  "the overkill desktop notification solution", "", "")
 
 #options which can be defined with /set plugins.var.python.sshnotify.foo
