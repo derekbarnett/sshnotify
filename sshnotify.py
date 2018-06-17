@@ -41,6 +41,7 @@
 #
 #
 #changelog:
+#v0.3.2 - throw the mess through pasteurize to try and get compatible with python 2/3
 #v0.3.1 - clean up some (not all) crap for pylint. still works,
 #         leaving well enough alone (2018-6-16)
 #v0.3.0 - futurize run for python3 (2018-6-16)
@@ -54,13 +55,15 @@
 #         hardcoded into the script. (2011-09-18)
 
 """sshnotify script for weechat"""
-
+from __future__ import absolute_import, division, print_function
+from __future__ import unicode_literals
 from builtins import str
-#import weechat, string, subprocess, re
 import re
+from future import standard_library
 import weechat
+standard_library.install_aliases()
 
-weechat.register("sshnotify", "delwin", "0.3.1", "GPL3",
+weechat.register("sshnotify", "delwin", "0.3.2", "GPL3",
                  "the overkill desktop notification solution", "", "")
 
 #options which can be defined with /set plugins.var.python.sshnotify.foo
@@ -153,8 +156,8 @@ def get_notified(data, bufferp, uber_empty, tagsn, isdisplayed,
     #if the message came in via private message...
     if (weechat.buffer_get_string(bufferp, "localvar_type") == "private" and
             weechat.config_get_plugin('show_priv_msg') == "on"):
-        buffer = (weechat.buffer_get_string(bufferp, "short_name") or
-                  weechat.buffer_get_string(bufferp, "name"))
+        bufferz = (weechat.buffer_get_string(bufferp, "short_name") or
+                   weechat.buffer_get_string(bufferp, "name"))
 
         #set notification image
         if weechat.config_get_plugin('pm-image') != "":
@@ -172,7 +175,7 @@ def get_notified(data, bufferp, uber_empty, tagsn, isdisplayed,
 
         uistring = urgencystring + imagestring
 
-        if buffer == prefix:
+        if bufferz == prefix:
             #the ' character currently needs changed to something else or the
             #message formatting fails
             #substituting " for '
@@ -210,12 +213,12 @@ def get_notified(data, bufferp, uber_empty, tagsn, isdisplayed,
     #if the message comes from a highlight rather than private message
     elif (ishilight == "1" and
           weechat.config_get_plugin('show_highlight') == "on"):
-        buffer = (weechat.buffer_get_string(bufferp, "short_name") or
-                  weechat.buffer_get_string(bufferp, "name"))
+        bufferz = (weechat.buffer_get_string(bufferp, "short_name") or
+                   weechat.buffer_get_string(bufferp, "name"))
         #convert ' to " and escape special characters so the ssh command
         #doesn't puke
-        buffer = re.sub("'", '"', buffer)
-        buffer = re.escape(buffer)
+        bufferz = re.sub("'", '"', bufferz)
+        bufferz = re.escape(bufferz)
         #notification title
         prefix = re.sub("'", '"', prefix)
         prefix = re.escape(prefix)
@@ -239,7 +242,7 @@ def get_notified(data, bufferp, uber_empty, tagsn, isdisplayed,
 
         uistring = urgencystring + imagestring
         #adding the notify-send command bits together
-        disp = '"/usr/bin/notify-send ' + uistring + '\'In ' + buffer + '\' \'' + prefix + ': ' + message + '\'' + extracommands + '\"'
+        disp = '"/usr/bin/notify-send ' + uistring + '\'In ' + bufferz + '\' \'' + prefix + ': ' + message + '\'' + extracommands + '\"'
 
         #decide where to send the notification
         alist = get_addresses()
@@ -264,7 +267,7 @@ def get_notified(data, bufferp, uber_empty, tagsn, isdisplayed,
 #might be a better way to do this but i might extend it
 #to allow /sshnotify to send notications directly with
 #arguments as the messages
-def notifying(data, buffer, args):
+def notifying(data, bufferz, args):
     """right now this is just to enable /help sshnotify"""
 
     weechat.prnt("", """
