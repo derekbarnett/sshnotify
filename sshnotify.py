@@ -58,7 +58,7 @@
 from __future__ import absolute_import, division, print_function
 from __future__ import unicode_literals
 import re
-from future.builtins import str, input
+from builtins import str, input
 from future import standard_library
 import weechat
 standard_library.install_aliases()
